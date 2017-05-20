@@ -14,22 +14,32 @@ public class Player {
     private int speed;
     private Color color;
 
-    private int bombAmount;
+    private int bombAmount, lifeAmount;
 
     private int size;
 
     private int up, down, left, right, bomb;
 
-    public Player(int up, int down, int left, int right, int bomb) {
+    private Position uiPlace;
+
+    private String name;
+
+    public Player(int up, int down, int left, int right, int bomb, Position uiPLace, String name) {
         this.up = up;
         this.down = down;
         this.left = left;
         this.right = right;
         this.bomb = bomb;
 
+        this.uiPlace = uiPLace;
+
         this.speed = 5;
         this.size = Map.RATIO - 10;
-        this.bombAmount = 0;
+        this.bombAmount = 3;
+        this.lifeAmount = 3;
+
+        this.name = name;
+
     }
 
     public void manageInputs(Input input, Map map) {
@@ -51,8 +61,9 @@ public class Player {
             moveH(map, x + (size / 2), 1);
         }
 
-        if (input.isKeyPressed(bomb)) {
+        if (input.isKeyPressed(bomb) && bombAmount > 0) {
             if (bombAmount <= 3) map.placeBomb(this);
+            bombAmount--;
         }
 
 
@@ -82,12 +93,32 @@ public class Player {
         graphics.setColor(color);
         graphics.fillOval(x - (size / 2), y - (size / 2), size, size);
 
+
+
+
+        graphics.setColor(Color.lightGray);
+        graphics.fillRect(uiPlace.getX(), uiPlace.getY(), 100, 50);
+
+        graphics.setColor(color);
+        graphics.fillRect(uiPlace.getX(), uiPlace.getY() + 45, 100, 5);
+
+        graphics.setColor(Color.red);
+        for (int it = 0; it < lifeAmount; it++) {
+            graphics.fillRect(uiPlace.getX() + 20 + (it * 20), uiPlace.getY() + 20, 15, 15);
+        }
+
+
+
     }
 
     public void spawn(int mapX, int mapY, Color color) {
         this.setMapX(mapX);
         this.setMapY(mapY);
         this.color = color;
+    }
+
+    public void hurt() {
+        lifeAmount--;
     }
 
 
@@ -165,5 +196,59 @@ public class Player {
         this.right = right;
     }
 
+    public int getLifeAmount() {
+        return lifeAmount;
+    }
 
+    public void setLifeAmount(int lifeAmount) {
+        this.lifeAmount = lifeAmount;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public int getBombAmount() {
+        return bombAmount;
+    }
+
+    public void setBombAmount(int bombAmount) {
+        this.bombAmount = bombAmount;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getBomb() {
+        return bomb;
+    }
+
+    public void setBomb(int bomb) {
+        this.bomb = bomb;
+    }
+
+    public Position getUiPlace() {
+        return uiPlace;
+    }
+
+    public void setUiPlace(Position uiPlace) {
+        this.uiPlace = uiPlace;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

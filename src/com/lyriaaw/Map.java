@@ -22,9 +22,20 @@ public class Map {
 
     private List<Bomb> bombs;
 
+    private List<Player> players;
+
     public Map() {
         field = new Block[17][21];
         bombs = new ArrayList<>();
+        players = new ArrayList<>();
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     public void draw(Graphics graphics) {
@@ -95,10 +106,10 @@ public class Map {
         List<Bomb> bombToDelete = new ArrayList<>();
         final long currentTime = new Date().getTime();
         bombs.forEach((bomb) -> {
-            if (currentTime >= (bomb.getTimePlaced() + 5000)) {
+            if (currentTime >= (bomb.getTimePlaced() + 5000) && !bomb.isExploding()) {
                 bomb.explode(this);
             }
-            if (currentTime >= (bomb.getTimePlaced() + 6000)) {
+            if (currentTime >= (bomb.getTimePlaced() + 5500)) {
                bombToDelete.add(bomb);
             }
         });
@@ -111,6 +122,14 @@ public class Map {
         if (block.getType() == BlockType.BREAKABLE) {
             block.setType(BlockType.EMPTY);
         }
+
+        players.forEach((player) -> {
+            if (player.getMapX() == position.getX() && player.getMapY() == position.getY()) player.hurt();
+        });
+        bombs.forEach((bomb) -> {
+            if (bomb.getX() == position.getX() && bomb.getY() == position.getY() && !bomb.isExploding()) bomb.explode(this);
+        });
+
     }
 
 

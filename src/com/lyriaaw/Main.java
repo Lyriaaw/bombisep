@@ -9,11 +9,13 @@ public class Main {
     public static final int WIDTH = 1080;
     public static final int HEIGHT = 720;
 
+    public static AppGameContainer appGameContainer;
+
     public static void main(String[] args) {
 
         try {
-            AppGameContainer appGameContainer = new AppGameContainer(new Game("Bomb'ISEP"));
-            appGameContainer.setDisplayMode(Map.MAP_WIDTH * Map.RATIO, Map.MAP_HEIGHT * Map.RATIO, false);
+            appGameContainer = new AppGameContainer(new Game("Bomb'ISEP"));
+            appGameContainer.setDisplayMode(Map.MAP_WIDTH * Map.RATIO, Map.MAP_HEIGHT * Map.RATIO + 100, false);
             appGameContainer.setTargetFrameRate(60);
             appGameContainer.setShowFPS(false);
             appGameContainer.start();
