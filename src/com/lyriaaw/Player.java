@@ -52,7 +52,7 @@ public class Player {
         }
 
         if (input.isKeyPressed(bomb)) {
-            map.placeBomb(this);
+            if (bombAmount <= 3) map.placeBomb(this);
         }
 
 

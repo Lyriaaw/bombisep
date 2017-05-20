@@ -38,6 +38,8 @@ public class Game extends BasicGame {
         player1.manageInputs(input, map);
         player2.manageInputs(input, map);
 
+        map.updateBombs();
+
 
 
     }

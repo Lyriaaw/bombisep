@@ -4,6 +4,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,6 +50,10 @@ public class Map {
                 graphics.fillRect(currentBlock.getX() * RATIO, currentBlock.getY() * RATIO, RATIO, RATIO);
             }
         }
+
+        bombs.forEach((bomb) -> {
+            bomb.draw(graphics);
+        });
     }
 
 
@@ -60,7 +65,16 @@ public class Map {
         int mapX = getMapRatio(x);
         int mapY = getMapRatio(y);
 
-        //System.out.println(x + " - " + y + " // " + mapX + " - " + mapY + " --> " + (field[mapY][mapX].getType() != BlockType.SOLID));
+
+        /*
+         * Let 500 milisecond to player to escape the bomb place
+         */
+        long currentTime = new Date().getTime();
+        for (Bomb bomb : bombs) {
+            if (bomb.getX() != mapX || bomb.getY() != mapY) continue;
+            if (currentTime > bomb.getTimePlaced() + 500) return false;
+        }
+
 
         return (field[mapY][mapX].getType() == BlockType.EMPTY);
     }
@@ -72,8 +86,31 @@ public class Map {
 
     public boolean placeBomb(Player player) {
         Bomb bomb = new Bomb(player);
+        bombs.add(bomb);
 
         return true;
+    }
+
+    public void updateBombs() {
+        List<Bomb> bombToDelete = new ArrayList<>();
+        final long currentTime = new Date().getTime();
+        bombs.forEach((bomb) -> {
+            if (currentTime >= (bomb.getTimePlaced() + 5000)) {
+                bomb.explode(this);
+            }
+            if (currentTime >= (bomb.getTimePlaced() + 6000)) {
+               bombToDelete.add(bomb);
+            }
+        });
+
+        bombs.removeAll(bombToDelete);
+    }
+
+    public void destroyBlock(Position position) {
+        Block block = getBlockAt(position.getX(), position.getY());
+        if (block.getType() == BlockType.BREAKABLE) {
+            block.setType(BlockType.EMPTY);
+        }
     }
 
 
