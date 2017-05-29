@@ -1,0 +1,25 @@
+package com.lyriaaw.bonus;
+
+import com.lyriaaw.Position;
+import org.newdawn.slick.Color;
+
+/**
+ * Created by lyriaaw on 22/05/17.
+ */
+public class SlowBonus extends Bonus {
+
+
+    public SlowBonus(Position position) {
+        super(position, Color.blue, 10000);
+    }
+
+    @Override
+    public void start() {
+        owner.setSpeed(owner.getSpeed() / 2);
+    }
+
+    @Override
+    public void finish() {
+        owner.setSpeed(owner.getSpeed() * 2);
+    }
+}

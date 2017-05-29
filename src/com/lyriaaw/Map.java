@@ -1,11 +1,15 @@
 package com.lyriaaw;
 
+import com.lyriaaw.bonus.Bonus;
+import com.lyriaaw.bonus.SlowBonus;
+import com.lyriaaw.bonus.SpeedBonus;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -24,10 +28,17 @@ public class Map {
 
     private List<Player> players;
 
+    private List<Bonus> bonusList;
+
+    private Random random;
+
     public Map() {
         field = new Block[17][21];
         bombs = new ArrayList<>();
         players = new ArrayList<>();
+        bonusList = new ArrayList<>();
+
+        random = new Random();
     }
 
     public List<Player> getPlayers() {
@@ -65,6 +76,8 @@ public class Map {
         bombs.forEach((bomb) -> {
             bomb.draw(graphics);
         });
+
+        bonusList.forEach(bonus -> bonus.drawOnMap(graphics));
     }
 
 
@@ -90,7 +103,7 @@ public class Map {
         return (field[mapY][mapX].getType() == BlockType.EMPTY);
     }
 
-    private int getMapRatio(int value) {
+    public int getMapRatio(int value) {
         return value / Map.RATIO;
     }
 
@@ -100,6 +113,22 @@ public class Map {
         bombs.add(bomb);
 
         return true;
+    }
+
+    public void update() {
+        List<Bonus> bonusAttribued = new ArrayList<>();
+        bonusList.forEach((bonus) -> {
+            players.forEach((player) -> {
+                if (bonus.getPosition().getX() == player.getMapX() && bonus.getPosition().getY() == player.getMapY() && player.getBonusList().size() < 4) {
+                    player.addBonus(bonus);
+                    bonusAttribued.add(bonus);
+                }
+            });
+        });
+        bonusList.removeAll(bonusAttribued);
+
+
+
     }
 
     public void updateBombs() {
@@ -121,6 +150,9 @@ public class Map {
         Block block = getBlockAt(position.getX(), position.getY());
         if (block.getType() == BlockType.BREAKABLE) {
             block.setType(BlockType.EMPTY);
+
+            generateBonus(position);
+
         }
 
         players.forEach((player) -> {
@@ -129,6 +161,25 @@ public class Map {
         bombs.forEach((bomb) -> {
             if (bomb.getX() == position.getX() && bomb.getY() == position.getY() && !bomb.isExploding()) bomb.explode(this);
         });
+
+
+    }
+
+    public void generateBonus(Position position) {
+        int randValue = random.nextInt(100) + 1;
+
+
+        if (randValue >= 5) {
+            switch (random.nextInt(1) + 1) {
+                case 1 :
+                    bonusList.add(new SpeedBonus(position));
+                    break;
+                case 2 :
+                    bonusList.add(new SlowBonus(position));
+                    break;
+            }
+
+        }
 
     }
 

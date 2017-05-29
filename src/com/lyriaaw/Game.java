@@ -54,13 +54,17 @@ public class Game extends BasicGame {
 
         playerList.forEach(player -> player.manageInputs(input, map));
 
+        map.update();
         map.updateBombs();
+
+
 
         playerList.forEach(player -> {
             if (player.getLifeAmount() == 0) {
                 winner = player;
                 gameFinished = true;
             }
+            player.updateBonues();
         });
 
     }

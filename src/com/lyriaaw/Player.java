@@ -1,7 +1,12 @@
 package com.lyriaaw;
 
 
+import com.lyriaaw.bonus.Bonus;
 import org.newdawn.slick.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by lyriaaw on 10/05/17.
@@ -24,6 +29,8 @@ public class Player {
 
     private String name;
 
+    private List<Bonus> bonusList;
+
     public Player(int up, int down, int left, int right, int bomb, Position uiPLace, String name) {
         this.up = up;
         this.down = down;
@@ -40,25 +47,31 @@ public class Player {
 
         this.name = name;
 
+        bonusList = new ArrayList<>();
+
     }
 
     public void manageInputs(Input input, Map map) {
 
         if (input.isKeyDown(up)) {
-            moveV(map, y - (size / 2) - 5, -1);
+//            moveV(map, y - (size / 2) - 5, -1);
+            moveUp(map);
 
         }
         if (input.isKeyDown(down)) {
+            moveDown(map);
 
-            moveV(map, y + (size / 2), 1);
+//            moveV(map, y + (size / 2), 1);
 
         }
         if (input.isKeyDown(left)) {
-            moveH(map, x - (size / 2) - 5, -1);
+//            System.out.println(name + " left");
+            moveLeft(map);
 
         }
         if (input.isKeyDown(right)) {
-            moveH(map, x + (size / 2), 1);
+            moveRight(map);
+            //moveH(map, x, 1);
         }
 
         if (input.isKeyPressed(bomb) && bombAmount > 0) {
@@ -66,24 +79,137 @@ public class Player {
             bombAmount--;
         }
 
+//        manageBlockOverrun(map);
+
 
         this.mapX = x / Map.RATIO;
         this.mapY = y / Map.RATIO;
 
-        //System.out.println(x + " - " + y + " // " + mapX + " - " + mapY);
+//        if (this.name.equals("Player 2")) System.out.print(x + " - " + y + " // " + mapX + " - " + mapY + " --> ");
+//        System.out.println(size);
     }
 
-    private void moveH(Map map, int x, int dir) {
-        if (map.canWalkHere(x, y - (size / 2)) && map.canWalkHere(x, y + (size / 2) - 1)) {
-            this.x += dir * speed;
+    /**
+     * So, we will hope that it'll never crash
+     * It takes care of the player position on the grid when he has a speed bonus.
+     * If the player goes on a solid / breakeable block, this function makes him goes back
+     * WE LOVE MAGIC NUMBERS
+     *
+     * It is currently wordking, please don't try to change it !! 
+     */
+    public void manageBlockOverrun(Map map) {
+        if (!map.canWalkHere(x - (size / 2) + 1, y - (size / 2)) && !map.canWalkHere(x - (size / 2) + 1, y + (size / 2))) {
+            x = mapX * Map.RATIO + (size / 2);
+        }
+        if (!map.canWalkHere(x + (size / 2) - 1, y - (size / 2)) && !map.canWalkHere(x + (size / 2) - 1, y + (size / 2))) {
+            x = mapX * Map.RATIO - (size / 2);
+        }
+        if (!map.canWalkHere(x - (size / 2), y - (size / 2) + 1) && !map.canWalkHere(x + (size / 2), y - (size / 2) +1)) {
+            y = mapY * Map.RATIO + (size / 2);
+        }
+        if (!map.canWalkHere(x - (size / 2), y + (size / 2) - 1) && !map.canWalkHere(x + (size / 2), y + (size / 2) -1)) {
+            y = mapY * Map.RATIO - (size / 2);
         }
     }
 
-    private void moveV(Map map, int y, int dir) {
-        if (map.canWalkHere(x - (size / 2), y) && map.canWalkHere(x + (size / 2) - 1, y)) {
-            this.y += dir * speed;
-        }
+    public void updateBonues() {
+        List<Bonus> finishedBonues = new ArrayList<>();
+        bonusList.forEach((bonus) -> {
+//            bonus.update();
+            if (new Date().getTime() >= bonus.getDateTaken() + bonus.getDuration()) {
+                finishedBonues.add(bonus);
+                bonus.finish();
+            }
+        });
+
+        bonusList.removeAll(finishedBonues);
     }
+
+    private void moveRight(Map map) {
+        int freeSpace = 0;
+        boolean obstacleFound = false;
+
+        while  (!obstacleFound) {
+            if (map.getBlockAt(mapX + freeSpace, map.getMapRatio(y - (size / 2))).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else if (map.getBlockAt(mapX + freeSpace, map.getMapRatio(y + (size / 2) - 1)).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else
+                freeSpace++;
+
+        }
+
+        freeSpace *= Map.RATIO;
+        freeSpace += (mapX) * Map.RATIO - (x + size / 2);
+
+        this.x += Math.min(speed, freeSpace);
+    }
+
+    private void moveLeft(Map map) {
+        int freeSpace = 0;
+        boolean obstacleFound = false;
+
+        while  (!obstacleFound) {
+            if (map.getBlockAt(mapX - freeSpace, map.getMapRatio(y - (size / 2))).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else if (map.getBlockAt(mapX - freeSpace, map.getMapRatio(y + (size / 2) - 1)).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else
+                freeSpace++;
+
+        }
+
+        freeSpace *= Map.RATIO;
+        freeSpace += (x - size / 2) - (mapX + 1) * Map.RATIO;
+
+        System.out.println(freeSpace);
+
+        this.x -= Math.min(speed, Math.abs(freeSpace));
+    }
+
+    private void moveUp(Map map) {
+        int freeSpace = 0;
+        boolean obstacleFound = false;
+
+        while  (!obstacleFound) {
+            if (map.getBlockAt(map.getMapRatio(x - (size / 2)), mapY - freeSpace).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else if (map.getBlockAt(map.getMapRatio(x + (size / 2) - 1), mapY - freeSpace).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else
+                freeSpace++;
+
+        }
+
+        freeSpace *= Map.RATIO;
+        freeSpace += (y - size / 2) - ((mapY + 1) * Map.RATIO);
+
+
+        this.y -= Math.min(speed, Math.abs(freeSpace));
+    }
+
+    private void moveDown(Map map) {
+        int freeSpace = 0;
+        boolean obstacleFound = false;
+
+        while  (!obstacleFound) {
+            if (map.getBlockAt(map.getMapRatio(x - (size / 2)), mapY + freeSpace).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else if (map.getBlockAt(map.getMapRatio(x + (size / 2) - 1), mapY + freeSpace).getType() != BlockType.EMPTY)
+                obstacleFound = true;
+            else
+                freeSpace++;
+
+        }
+
+        freeSpace *= Map.RATIO;
+        freeSpace += ((mapY) * Map.RATIO) - (y + size / 2);
+
+        System.out.println(freeSpace);
+        this.y += Math.min(speed, Math.abs(freeSpace));
+    }
+
+
 
     public void draw(Graphics graphics) {
 
@@ -93,18 +219,20 @@ public class Player {
         graphics.setColor(color);
         graphics.fillOval(x - (size / 2), y - (size / 2), size, size);
 
-
-
-
         graphics.setColor(Color.lightGray);
-        graphics.fillRect(uiPlace.getX(), uiPlace.getY(), 100, 50);
+        graphics.fillRect(uiPlace.getX(), uiPlace.getY(), 100, 100);
 
         graphics.setColor(color);
-        graphics.fillRect(uiPlace.getX(), uiPlace.getY() + 45, 100, 5);
+        graphics.fillRect(uiPlace.getX(), uiPlace.getY() + 95, 100, 5);
 
         graphics.setColor(Color.red);
         for (int it = 0; it < lifeAmount; it++) {
             graphics.fillRect(uiPlace.getX() + 20 + (it * 20), uiPlace.getY() + 20, 15, 15);
+        }
+
+        for (int it = 0; it < bonusList.size(); it++) {
+            bonusList.get(it).setPosition(new Position(uiPlace.getX() + 5 + (it * 20), uiPlace.getY() + 50));
+            bonusList.get(it).draw(graphics);
         }
 
 
@@ -250,5 +378,19 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Bonus> getBonusList() {
+        return bonusList;
+    }
+
+    public void setBonusList(List<Bonus> bonusList) {
+        this.bonusList = bonusList;
+    }
+
+    public void addBonus(Bonus bonus) {
+        this.bonusList.add(bonus);
+        bonus.setOwner(this);
+        bonus.start();
     }
 }
