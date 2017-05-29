@@ -21,7 +21,7 @@ public class Player {
 
     private int bombAmount, lifeAmount;
 
-    private int size;
+    private int size, bombSize;
 
     private int up, down, left, right, bomb;
 
@@ -44,6 +44,7 @@ public class Player {
         this.size = Map.RATIO - 10;
         this.bombAmount = 3;
         this.lifeAmount = 3;
+        this.bombSize = 3;
 
         this.name = name;
 
@@ -53,69 +54,29 @@ public class Player {
 
     public void manageInputs(Input input, Map map) {
 
-        if (input.isKeyDown(up)) {
-//            moveV(map, y - (size / 2) - 5, -1);
+        if (input.isKeyDown(up))
             moveUp(map);
-
-        }
-        if (input.isKeyDown(down)) {
+        if (input.isKeyDown(down))
             moveDown(map);
-
-//            moveV(map, y + (size / 2), 1);
-
-        }
-        if (input.isKeyDown(left)) {
-//            System.out.println(name + " left");
+        if (input.isKeyDown(left))
             moveLeft(map);
-
-        }
-        if (input.isKeyDown(right)) {
+        if (input.isKeyDown(right))
             moveRight(map);
-            //moveH(map, x, 1);
-        }
 
         if (input.isKeyPressed(bomb) && bombAmount > 0) {
             if (bombAmount <= 3) map.placeBomb(this);
             bombAmount--;
         }
 
-//        manageBlockOverrun(map);
-
-
         this.mapX = x / Map.RATIO;
         this.mapY = y / Map.RATIO;
-
-//        if (this.name.equals("Player 2")) System.out.print(x + " - " + y + " // " + mapX + " - " + mapY + " --> ");
-//        System.out.println(size);
     }
 
-    /**
-     * So, we will hope that it'll never crash
-     * It takes care of the player position on the grid when he has a speed bonus.
-     * If the player goes on a solid / breakeable block, this function makes him goes back
-     * WE LOVE MAGIC NUMBERS
-     *
-     * It is currently wordking, please don't try to change it !! 
-     */
-    public void manageBlockOverrun(Map map) {
-        if (!map.canWalkHere(x - (size / 2) + 1, y - (size / 2)) && !map.canWalkHere(x - (size / 2) + 1, y + (size / 2))) {
-            x = mapX * Map.RATIO + (size / 2);
-        }
-        if (!map.canWalkHere(x + (size / 2) - 1, y - (size / 2)) && !map.canWalkHere(x + (size / 2) - 1, y + (size / 2))) {
-            x = mapX * Map.RATIO - (size / 2);
-        }
-        if (!map.canWalkHere(x - (size / 2), y - (size / 2) + 1) && !map.canWalkHere(x + (size / 2), y - (size / 2) +1)) {
-            y = mapY * Map.RATIO + (size / 2);
-        }
-        if (!map.canWalkHere(x - (size / 2), y + (size / 2) - 1) && !map.canWalkHere(x + (size / 2), y + (size / 2) -1)) {
-            y = mapY * Map.RATIO - (size / 2);
-        }
-    }
+
 
     public void updateBonues() {
         List<Bonus> finishedBonues = new ArrayList<>();
         bonusList.forEach((bonus) -> {
-//            bonus.update();
             if (new Date().getTime() >= bonus.getDateTaken() + bonus.getDuration()) {
                 finishedBonues.add(bonus);
                 bonus.finish();
@@ -125,6 +86,12 @@ public class Player {
         bonusList.removeAll(finishedBonues);
     }
 
+
+
+    /*
+    Moves functions
+    I love Magic numbers
+     */
     private void moveRight(Map map) {
         int freeSpace = 0;
         boolean obstacleFound = false;
@@ -162,8 +129,6 @@ public class Player {
         freeSpace *= Map.RATIO;
         freeSpace += (x - size / 2) - (mapX + 1) * Map.RATIO;
 
-        System.out.println(freeSpace);
-
         this.x -= Math.min(speed, Math.abs(freeSpace));
     }
 
@@ -183,7 +148,6 @@ public class Player {
 
         freeSpace *= Map.RATIO;
         freeSpace += (y - size / 2) - ((mapY + 1) * Map.RATIO);
-
 
         this.y -= Math.min(speed, Math.abs(freeSpace));
     }
@@ -205,7 +169,6 @@ public class Player {
         freeSpace *= Map.RATIO;
         freeSpace += ((mapY) * Map.RATIO) - (y + size / 2);
 
-        System.out.println(freeSpace);
         this.y += Math.min(speed, Math.abs(freeSpace));
     }
 
@@ -386,6 +349,14 @@ public class Player {
 
     public void setBonusList(List<Bonus> bonusList) {
         this.bonusList = bonusList;
+    }
+
+    public int getBombSize() {
+        return bombSize;
+    }
+
+    public void setBombSize(int bombSize) {
+        this.bombSize = bombSize;
     }
 
     public void addBonus(Bonus bonus) {

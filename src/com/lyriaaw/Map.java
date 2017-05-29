@@ -1,5 +1,6 @@
 package com.lyriaaw;
 
+import com.lyriaaw.bonus.BombImproveBonus;
 import com.lyriaaw.bonus.Bonus;
 import com.lyriaaw.bonus.SlowBonus;
 import com.lyriaaw.bonus.SpeedBonus;
@@ -112,6 +113,7 @@ public class Map {
         Bomb bomb = new Bomb(player);
         bombs.add(bomb);
 
+
         return true;
     }
 
@@ -172,7 +174,7 @@ public class Map {
         if (randValue >= 5) {
             switch (random.nextInt(1) + 1) {
                 case 1 :
-                    bonusList.add(new SpeedBonus(position));
+                    bonusList.add(new BombImproveBonus(position));
                     break;
                 case 2 :
                     bonusList.add(new SlowBonus(position));
