@@ -171,14 +171,18 @@ public class Map {
         int randValue = random.nextInt(100) + 1;
 
 
-        if (randValue >= 5) {
-            switch (random.nextInt(1) + 1) {
+        if (randValue >= 80) {
+            switch (random.nextInt(3) + 1) {
                 case 1 :
                     bonusList.add(new BombImproveBonus(position));
                     break;
                 case 2 :
                     bonusList.add(new SlowBonus(position));
                     break;
+                case 3 :
+                    bonusList.add(new SpeedBonus(position));
+                    break;
+
             }
 
         }
