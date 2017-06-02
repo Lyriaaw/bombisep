@@ -34,7 +34,7 @@ public class Map {
     private Random random;
 
     public Map() {
-        field = new Block[17][21];
+        field = new Block[Map.MAP_HEIGHT][Map.MAP_WIDTH];
         bombs = new ArrayList<>();
         players = new ArrayList<>();
         bonusList = new ArrayList<>();
@@ -61,9 +61,9 @@ public class Map {
                     case BREAKABLE:
                         graphics.setColor(Color.orange);
                         break;
-                    case BOMB :
-                        graphics.setColor(Color.red);
-                        break;
+//                    case BOMB :
+//                        graphics.setColor(Color.red);
+//                        break;
                     default :
                         graphics.setColor(Color.green);
                         break;
@@ -86,22 +86,21 @@ public class Map {
         return field[y][x];
     }
 
-    public boolean canWalkHere(int x, int y) {
-        int mapX = getMapRatio(x);
-        int mapY = getMapRatio(y);
-
-
+    public boolean canWalkHere(int x, int y, int searchAmount) {
         /*
          * Let 500 milisecond to player to escape the bomb place
          */
         long currentTime = new Date().getTime();
         for (Bomb bomb : bombs) {
-            if (bomb.getX() != mapX || bomb.getY() != mapY) continue;
-            if (currentTime > bomb.getTimePlaced() + 500) return false;
+            if (bomb.getX() != x || bomb.getY() != y) continue;
+            if (searchAmount == 0) return true;
         }
 
+//        if (searchAmount == 0 && field[y][x].getType() == BlockType.BOMB) return true;
 
-        return (field[mapY][mapX].getType() == BlockType.EMPTY);
+
+
+        return (field[y][x].getType() == BlockType.EMPTY);
     }
 
     public int getMapRatio(int value) {
@@ -112,6 +111,8 @@ public class Map {
     public boolean placeBomb(Player player) {
         Bomb bomb = new Bomb(player);
         bombs.add(bomb);
+
+        field[player.getMapY()][player.getMapX()].setType(BlockType.BOMB);
 
 
         return true;
@@ -128,9 +129,6 @@ public class Map {
             });
         });
         bonusList.removeAll(bonusAttribued);
-
-
-
     }
 
     public void updateBombs() {
@@ -140,8 +138,9 @@ public class Map {
             if (currentTime >= (bomb.getTimePlaced() + 5000) && !bomb.isExploding()) {
                 bomb.explode(this);
             }
-            if (currentTime >= (bomb.getTimePlaced() + 5500)) {
-               bombToDelete.add(bomb);
+            if (currentTime >= (bomb.getTimePlaced() + 5100)) {
+                bombToDelete.add(bomb);
+                field[bomb.getY()][bomb.getX()].setType(BlockType.EMPTY);
             }
         });
 

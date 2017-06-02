@@ -97,13 +97,12 @@ public class Player {
         boolean obstacleFound = false;
 
         while  (!obstacleFound) {
-            if (map.getBlockAt(mapX + freeSpace, map.getMapRatio(y - (size / 2))).getType() != BlockType.EMPTY)
+            if (!map.canWalkHere(mapX + freeSpace, map.getMapRatio(y - (size / 2)), freeSpace))
                 obstacleFound = true;
-            else if (map.getBlockAt(mapX + freeSpace, map.getMapRatio(y + (size / 2) - 1)).getType() != BlockType.EMPTY)
+            else if (!map.canWalkHere(mapX + freeSpace, map.getMapRatio(y + (size / 2) - 1), freeSpace))
                 obstacleFound = true;
             else
                 freeSpace++;
-
         }
 
         freeSpace *= Map.RATIO;
@@ -117,13 +116,12 @@ public class Player {
         boolean obstacleFound = false;
 
         while  (!obstacleFound) {
-            if (map.getBlockAt(mapX - freeSpace, map.getMapRatio(y - (size / 2))).getType() != BlockType.EMPTY)
+            if (!map.canWalkHere(mapX - freeSpace, map.getMapRatio(y - (size / 2)), freeSpace))
                 obstacleFound = true;
-            else if (map.getBlockAt(mapX - freeSpace, map.getMapRatio(y + (size / 2) - 1)).getType() != BlockType.EMPTY)
+            else if (!map.canWalkHere(mapX - freeSpace, map.getMapRatio(y + (size / 2) - 1), freeSpace))
                 obstacleFound = true;
             else
                 freeSpace++;
-
         }
 
         freeSpace *= Map.RATIO;
@@ -137,13 +135,12 @@ public class Player {
         boolean obstacleFound = false;
 
         while  (!obstacleFound) {
-            if (map.getBlockAt(map.getMapRatio(x - (size / 2)), mapY - freeSpace).getType() != BlockType.EMPTY)
+            if (!map.canWalkHere(map.getMapRatio(x - (size / 2)), mapY - freeSpace, freeSpace))
                 obstacleFound = true;
-            else if (map.getBlockAt(map.getMapRatio(x + (size / 2) - 1), mapY - freeSpace).getType() != BlockType.EMPTY)
+            else if (!map.canWalkHere(map.getMapRatio(x + (size / 2) - 1), mapY - freeSpace, freeSpace))
                 obstacleFound = true;
             else
                 freeSpace++;
-
         }
 
         freeSpace *= Map.RATIO;
@@ -157,13 +154,12 @@ public class Player {
         boolean obstacleFound = false;
 
         while  (!obstacleFound) {
-            if (map.getBlockAt(map.getMapRatio(x - (size / 2)), mapY + freeSpace).getType() != BlockType.EMPTY)
+            if (!map.canWalkHere(map.getMapRatio(x - (size / 2)), mapY + freeSpace, freeSpace))
                 obstacleFound = true;
-            else if (map.getBlockAt(map.getMapRatio(x + (size / 2) - 1), mapY + freeSpace).getType() != BlockType.EMPTY)
+            else if (!map.canWalkHere(map.getMapRatio(x + (size / 2) - 1), mapY + freeSpace, freeSpace))
                 obstacleFound = true;
             else
                 freeSpace++;
-
         }
 
         freeSpace *= Map.RATIO;
@@ -197,9 +193,6 @@ public class Player {
             bonusList.get(it).setPosition(new Position(uiPlace.getX() + 5 + (it * 20), uiPlace.getY() + 50));
             bonusList.get(it).draw(graphics);
         }
-
-
-
     }
 
     public void spawn(int mapX, int mapY, Color color) {
@@ -211,7 +204,6 @@ public class Player {
     public void hurt() {
         lifeAmount--;
     }
-
 
     public int getX() {
         return x;

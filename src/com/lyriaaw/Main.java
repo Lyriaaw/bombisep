@@ -17,7 +17,7 @@ public class Main {
             appGameContainer = new AppGameContainer(new Game("Bomb'ISEP"));
             appGameContainer.setDisplayMode(Map.MAP_WIDTH * Map.RATIO, Map.MAP_HEIGHT * Map.RATIO + 100, false);
             appGameContainer.setTargetFrameRate(60);
-            appGameContainer.setShowFPS(false);
+            appGameContainer.setShowFPS(true);
             appGameContainer.start();
         } catch (SlickException e) {
             e.printStackTrace();

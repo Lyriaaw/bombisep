@@ -45,7 +45,6 @@ public class Game extends BasicGame {
         players.add(player1);
         players.add(player2);
         map.setPlayers(players);
-
     }
 
     @Override
@@ -79,7 +78,5 @@ public class Game extends BasicGame {
 
             playerList.forEach(player -> player.draw(graphics));
         }
-
-
     }
 }
