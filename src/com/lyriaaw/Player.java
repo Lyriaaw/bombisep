@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ *
  * Created by lyriaaw on 10/05/17.
  */
 public class Player {
@@ -30,6 +31,9 @@ public class Player {
     private String name;
 
     private List<Bonus> bonusList;
+
+    private boolean superBomb = false;
+    private int maxBombAmount = 3;
 
     public Player(int up, int down, int left, int right, int bomb, Position uiPLace, String name) {
         this.up = up;
@@ -64,7 +68,7 @@ public class Player {
             moveRight(map);
 
         if (input.isKeyPressed(bomb) && bombAmount > 0) {
-            if (bombAmount <= 3) map.placeBomb(this);
+            if (bombAmount <= maxBombAmount) map.placeBomb(this);
             bombAmount--;
         }
 
@@ -355,5 +359,21 @@ public class Player {
         this.bonusList.add(bonus);
         bonus.setOwner(this);
         bonus.start();
+    }
+
+    public boolean isSuperBomb() {
+        return superBomb;
+    }
+
+    public void setSuperBomb(boolean superBomb) {
+        this.superBomb = superBomb;
+    }
+
+    public int getMaxBombAmount() {
+        return maxBombAmount;
+    }
+
+    public void setMaxBombAmount(int maxBombAmount) {
+        this.maxBombAmount = maxBombAmount;
     }
 }

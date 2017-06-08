@@ -6,8 +6,8 @@ import org.newdawn.slick.Color;
 /**
  * Created by lyriaaw on 29/05/17.
  */
-public class BombImproveBonus  extends Bonus {
-    public BombImproveBonus(Position position) {
+public class MorePowerfulBomb extends Bonus {
+    public MorePowerfulBomb(Position position) {
         super(position, new Color(20, 20, 20), 5000);
     }
 

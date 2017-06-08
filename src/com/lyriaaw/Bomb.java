@@ -107,26 +107,26 @@ public class Bomb {
 
 
         for (int it = 1; it <= size; it++) {
-            if (map.getBlockAt(x + it, y).getType() == BlockType.SOLID) break;  // If the block is solid, we stop the explosion propagation on this line
+            if ( x + it == Map.MAP_WIDTH || map.getBlockAt(x + it, y).getType() == BlockType.SOLID && !owner.isSuperBomb()) break;  // If the block is solid, we stop the explosion propagation on this line
             aoe.add(new Position(x + it, y));
             if (map.getBlockAt(x + it, y).getType() == BlockType.BREAKABLE) break;  // If the block is solid, we stop the explosion propagation on this line
 
         }
 
         for (int it = 1; it <= size; it++) {
-            if (map.getBlockAt(x - it, y).getType() == BlockType.SOLID) break;
+            if (x + it == 0 || map.getBlockAt(x - it, y).getType() == BlockType.SOLID && !owner.isSuperBomb()) break;
             aoe.add(new Position(x - it, y));
             if (map.getBlockAt(x - it, y).getType() == BlockType.BREAKABLE) break;  // If the block is solid, we stop the explosion propagation on this line
         }
 
         for (int it = 1; it <= size; it++) {
-            if (map.getBlockAt(x, y + it).getType() == BlockType.SOLID) break;
+            if (y + it == Map.MAP_HEIGHT || map.getBlockAt(x, y + it).getType() == BlockType.SOLID && !owner.isSuperBomb()) break;
             aoe.add(new Position(x, y + it));
             if (map.getBlockAt(x, y + it).getType() == BlockType.BREAKABLE) break;  // If the block is solid, we stop the explosion propagation on this line
         }
 
         for (int it = 1; it <= size; it++) {
-            if (map.getBlockAt(x, y - it).getType() == BlockType.SOLID) break;
+            if (y - it == 0 || map.getBlockAt(x, y - it).getType() == BlockType.SOLID && !owner.isSuperBomb()) break;
             aoe.add(new Position(x, y - it));
             if (map.getBlockAt(x, y - it).getType() == BlockType.BREAKABLE) break;  // If the block is solid, we stop the explosion propagation on this line
         }

@@ -1,9 +1,6 @@
 package com.lyriaaw;
 
-import com.lyriaaw.bonus.BombImproveBonus;
-import com.lyriaaw.bonus.Bonus;
-import com.lyriaaw.bonus.SlowBonus;
-import com.lyriaaw.bonus.SpeedBonus;
+import com.lyriaaw.bonus.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -171,16 +168,35 @@ public class Map {
 
 
         if (randValue >= 80) {
-            switch (random.nextInt(3) + 1) {
+            switch (random.nextInt(9) + 1) {
                 case 1 :
-                    bonusList.add(new BombImproveBonus(position));
+                    bonusList.add(new LessBomb(position));
                     break;
                 case 2 :
-                    bonusList.add(new SlowBonus(position));
+                    bonusList.add(new LessPowerfulBomb(position));
                     break;
                 case 3 :
+                    bonusList.add(new Life(position));
+                    break;
+                case 4 :
+                    bonusList.add(new MorePowerfulBomb(position));
+                    break;
+                case 5 :
+                    bonusList.add(new MotherOfBomb(position));
+                    break;
+                case 6 :
+                    bonusList.add(new PlusBomb(position));
+                    break;
+                case 7 :
+                    bonusList.add(new SlowBonus(position));
+                    break;
+                case 8 :
                     bonusList.add(new SpeedBonus(position));
                     break;
+                case 9 :
+                    bonusList.add(new SuperBomb(position));
+                    break;
+
 
             }
 
